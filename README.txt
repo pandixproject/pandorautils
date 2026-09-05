@@ -30,9 +30,6 @@ A C compiler and make are required. Build every program with:
 The binaries are written to the bin/ directory. To remove build output:
     make clean
 
-You can also use the COMPILE.sh script:
-    bash COMPILE.sh
-
   RUNNING
 Run a program from the bin/ directory, for example:
     ./bin/pcat README.txt
