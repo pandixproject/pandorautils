@@ -58,9 +58,18 @@ int main(int argc, char *argv[]) {
     if (gr)
       printf("(%s)", gr->gr_name);
 
-    gid_t groups[64];
-    int ngroups = 64;
-    if (getgrouplist(pw->pw_name, gid, groups, &ngroups) != -1) {
+    int ngroups = getgroups(0, NULL);
+    if (ngroups > 0) {
+      gid_t *groups = malloc((size_t)ngroups * sizeof(*groups));
+      if (!groups) {
+        perror("pwhoami");
+        return 1;
+      }
+      if (getgroups(ngroups, groups) == -1) {
+        perror("pwhoami");
+        free(groups);
+        return 1;
+      }
       printf(" groups=");
       for (int i = 0; i < ngroups; i++) {
         struct group *g = getgrgid(groups[i]);
@@ -70,6 +79,7 @@ int main(int argc, char *argv[]) {
         if (g)
           printf("(%s)", g->gr_name);
       }
+      free(groups);
     }
     printf("\n");
     return 0;

@@ -1,6 +1,4 @@
-#define _GNU_SOURCE
 #include <dirent.h>
-#include <fcntl.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,15 +46,8 @@ int main(int argc, char *argv[]) {
     char mtime_str[64];
     format_time(st.st_mtime, mtime_str, sizeof(mtime_str));
 
-    char btime_str[64] = "N/A";
-    struct statx stx;
-    if (statx(AT_FDCWD, fullpath, 0, STATX_BTIME, &stx) == 0 &&
-        (stx.stx_mask & STATX_BTIME)) {
-      format_time(stx.stx_btime.tv_sec, btime_str, sizeof(btime_str));
-    }
-
-    printf("%-25s %-8s %-10s created: %-20s modified: %-20s\n", entry->d_name,
-           size_str, owner, btime_str, mtime_str);
+    printf("%-25s %-8s %-10s modified: %-20s\n", entry->d_name, size_str,
+           owner, mtime_str);
   }
   closedir(d);
   return 0;
