@@ -126,6 +126,11 @@ int copy_dir(const char *src_path, const char *dst_path, const Options *opt) {
     } else if (S_ISREG(child_st.st_mode)) {
       if (copy_file(src_child, dst_child, opt) != 0)
         status = 1;
+    } else if (S_ISLNK(child_st.st_mode)) {
+      char target[4096];
+      ssize_t length = readlink(src_child, target, sizeof(target) - 1);
+      if (length < 0) { perror(src_child); status = 1; }
+      else { target[length] = '\0'; if (symlink(target, dst_child) != 0) { perror(dst_child); status = 1; } }
     }
   }
 
@@ -143,8 +148,8 @@ int copy_dir(const char *src_path, const char *dst_path, const Options *opt) {
 }
 
 void print_usage(const char *prog) {
-  printf("Usage: %s [OPTION]... SOURCE DEST\n", prog);
-  printf("Copy SOURCE to DEST.\n\n");
+  printf("Usage: %s [OPTION]... SOURCE... DEST\n", prog);
+  printf("Copy SOURCE(s) to DEST.\n\n");
   printf("  -r         copy directories recursively\n");
   printf("  -p         preserve mode and timestamps\n");
   printf("  -v         explain what is being done\n");
@@ -182,27 +187,36 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (argc - i != 2) {
+  if (argc - i < 2) {
     print_usage(argv[0]);
     return 1;
   }
 
-  const char *src_path = argv[i];
-  const char *dst_path = argv[i + 1];
-
-  struct stat st;
-  if (stat(src_path, &st) == -1) {
-    perror(src_path);
+  const char *destination = argv[argc - 1];
+  struct stat destination_st;
+  int destination_is_dir = stat(destination, &destination_st) == 0 && S_ISDIR(destination_st.st_mode);
+  int sources = argc - i - 1;
+  if (sources > 1 && !destination_is_dir) {
+    fprintf(stderr, "%s: target '%s' is not a directory\n", argv[0], destination);
     return 1;
   }
-
-  if (S_ISDIR(st.st_mode)) {
-    if (!opt.recursive) {
-      fprintf(stderr, "%s: omitting directory '%s' (use -r)\n", argv[0],
-              src_path);
-      return 1;
+  int status = 0;
+  for (; i < argc - 1; i++) {
+    const char *src_path = argv[i]; char destination_path[4096]; const char *dst_path = destination;
+    if (destination_is_dir) {
+      const char *base = strrchr(src_path, '/'); base = base ? base + 1 : src_path;
+      if (snprintf(destination_path, sizeof(destination_path), "%s/%s", destination, base) >= (int)sizeof(destination_path)) { fprintf(stderr, "%s: destination path is too long\n", argv[0]); status = 1; continue; }
+      dst_path = destination_path;
     }
-    return copy_dir(src_path, dst_path, &opt);
+    struct stat st;
+    if (lstat(src_path, &st) == -1) { perror(src_path); status = 1; continue; }
+    if (S_ISDIR(st.st_mode)) {
+      if (!opt.recursive) { fprintf(stderr, "%s: omitting directory '%s' (use -r)\n", argv[0], src_path); status = 1; }
+      else if (copy_dir(src_path, dst_path, &opt)) status = 1;
+    } else if (S_ISLNK(st.st_mode)) {
+      char target[4096]; ssize_t length = readlink(src_path, target, sizeof(target) - 1);
+      if (length < 0) { perror(src_path); status = 1; } else { target[length] = '\0'; if (symlink(target, dst_path)) { perror(dst_path); status = 1; } }
+    } else if (copy_file(src_path, dst_path, &opt)) status = 1;
   }
-  return copy_file(src_path, dst_path, &opt);
+  return status;
 }

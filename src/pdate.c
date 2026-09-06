@@ -40,6 +40,12 @@ int main(int argc, char *argv[]) {
     } else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
       print_usage(argv[0]);
       return 0;
+    } else if (argv[i][0] == '+') {
+      if (opt.format) {
+        fprintf(stderr, "%s: choose only one output format\n", argv[0]);
+        return 1;
+      }
+      opt.format = argv[i] + 1;
     } else {
       fprintf(stderr, "%s: unknown option: %s\n", argv[0], argv[i]);
       print_usage(argv[0]);

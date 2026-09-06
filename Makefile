@@ -12,7 +12,7 @@ BINDIR_BUILD := bin
 SOURCES := $(wildcard $(SRCDIR)/*.c)
 PROGRAMS := $(patsubst $(SRCDIR)/%.c,$(BINDIR_BUILD)/%,$(SOURCES))
 
-.PHONY: all clean install uninstall
+.PHONY: all clean install uninstall test
 
 all: $(PROGRAMS)
 
@@ -31,3 +31,6 @@ install: all
 
 uninstall:
 	rm -f $(addprefix $(DESTDIR)$(BINDIR)/,$(notdir $(PROGRAMS)))
+
+test: all
+	sh tests/run.sh
