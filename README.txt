@@ -29,6 +29,8 @@ coreutils programs. It is a work in progress by the Pandix Project.
     pwc      count lines, words, and bytes
     pyes     repeatedly print a string
     puniq    report or omit repeated lines
+    pstat    display file or filesystem status
+    pfind    search for files in a directory hierarchy
 
   COMPILING
 A C compiler and make are required. Build every program with:
