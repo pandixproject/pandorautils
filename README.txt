@@ -31,6 +31,11 @@ coreutils programs. It is a work in progress by the Pandix Project.
     puniq    report or omit repeated lines
     pstat    display file or filesystem status
     pfind    search for files in a directory hierarchy
+    pfile    determine file type
+    ptrue    returns true
+    pfalse   returns false
+    pwhich   locate a command
+    psleep   suspend execution for a specified amount of time
 
   COMPILING
 A C compiler and make are required. Build every program with:
