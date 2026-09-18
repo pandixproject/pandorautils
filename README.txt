@@ -36,6 +36,8 @@ coreutils programs. It is a work in progress by the Pandix Project.
     pfalse   returns false
     pwhich   locate a command
     psleep   suspend execution for a specified amount of time
+    pgrep    search for patterns in text
+    pangrep  search for processes by name
 
   COMPILING
 A C compiler and make are required. Build every program with:
