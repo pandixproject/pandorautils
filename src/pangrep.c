@@ -1,6 +1,5 @@
 #include <dirent.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 int main(int argc, char *argv[]) {
@@ -20,12 +19,9 @@ int main(int argc, char *argv[]) {
   }
 
   while ((entry = readdir(proc)) != NULL) {
-    char path[PATH_MAX];
+    char path[268];
     FILE *file;
     char name[256];
-
-    if (entry->d_type != DT_DIR)
-      continue;
 
     if (strspn(entry->d_name, "0123456789") != strlen(entry->d_name))
       continue;
