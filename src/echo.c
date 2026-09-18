@@ -120,9 +120,6 @@ int main(int argc, char *argv[]) {
     if (strcmp(argv[i], "--help") == 0) {
       print_usage(argv[0]);
       return 0;
-    } else if (strcmp(argv[i], "--version") == 0) {
-      printf("echo (custom coreutils clone)\n");
-      return 0;
     } else if (strcmp(argv[i], "--") == 0) {
       i++;
       break;

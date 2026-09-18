@@ -5,39 +5,39 @@ Pandorautils is a small, simple remake (or demake) of selected GNU
 coreutils programs. It is a work in progress by the Pandix Project.
 
   PROGRAMS
-    pcat     concatenate files and print them to standard output
-    pbasename print a file name with directory components removed
-    pchmod   change file permissions
-    pcp      copy files and directories
-    pdate    display the current date and time
-    pdirname print a path with its last component removed
-    pecho    print text
-    phead    print the first lines of files
-    plink    create hard or symbolic links
-    pls      list directory contents
-    pmkdir   create directories
-    pmv      move and rename files
-    ppwd     print the current working directory
-    preadlink print the value of a symbolic link
-    prm      remove files and directories
-    prmdir   remove empty directories
-    psort    sort lines of text
-    ptail    print the last lines of files
-    ptee     copy standard input to files and standard output
-    ptouch   create files and update timestamps
-    pwhoami  print the current user
-    pwc      count lines, words, and bytes
-    pyes     repeatedly print a string
-    puniq    report or omit repeated lines
-    pstat    display file or filesystem status
-    pfind    search for files in a directory hierarchy
-    pfile    determine file type
-    ptrue    returns true
-    pfalse   returns false
-    pwhich   locate a command
-    psleep   suspend execution for a specified amount of time
-    pgrep    search for patterns in text
-    pangrep  search for processes by name
+    cat      concatenate files and print them to standard output
+    basename  print a file name with directory components removed
+    chmod    change file permissions
+    cp       copy files and directories
+    date     display the current date and time
+    dirname  print a path with its last component removed
+    echo     print text
+    head     print the first lines of files
+    link     create hard or symbolic links
+    ls       list directory contents
+    mkdir    create directories
+    mv       move and rename files
+    pwd      print the current working directory
+    readlink  print the value of a symbolic link
+    rm       remove files and directories
+    rmdir    remove empty directories
+    sort     sort lines of text
+    tail     print the last lines of files
+    tee      copy standard input to files and standard output
+    touch    create files and update timestamps
+    whoami   print the current user
+    wc       count lines, words, and bytes
+    yes      repeatedly print a string
+    uniq     report or omit repeated lines
+    stat     display file or filesystem status
+    find     search for files in a directory hierarchy
+    file     determine file type
+    true     returns true
+    false    returns false
+    which    locate a command
+    sleep    suspend execution for a specified amount of time
+    grep     search for patterns in text
+    pgrep    search for processes by name
 
   COMPILING
 A C compiler and make are required. Build every program with:

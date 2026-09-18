@@ -1,62 +1,49 @@
-#include <regex.h>
+#include <dirent.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char *argv[]) {
-  regex_t regex;
-  int ret;
-  int found = 0;
+  DIR *proc;
+  struct dirent *entry;
 
-  if (argc < 2) {
-    fprintf(stderr, "Usage: pgrep PATTERN [FILE...]\n");
+  if (argc != 2) {
+    fprintf(stderr, "Usage: pangrep PATTERN\n");
     return 2;
   }
 
-  ret = regcomp(&regex, argv[1], REG_EXTENDED);
-  if (ret != 0) {
-    char error[256];
-    regerror(ret, &regex, error, sizeof(error));
-    fprintf(stderr, "pgrep: %s\n", error);
+  proc = opendir("/proc");
+
+  if (proc == NULL) {
+    perror("pangrep: /proc");
     return 2;
   }
 
-  if (argc == 2) {
-    char *line = NULL;
-    size_t len = 0;
+  while ((entry = readdir(proc)) != NULL) {
+    char path[268];
+    FILE *file;
+    char name[256];
 
-    while (getline(&line, &len, stdin) != -1) {
-      if (regexec(&regex, line, 0, NULL, 0) == 0) {
-        fputs(line, stdout);
-        found = 1;
-      }
+    if (strspn(entry->d_name, "0123456789") != strlen(entry->d_name))
+      continue;
+
+    snprintf(path, sizeof(path), "/proc/%s/comm", entry->d_name);
+
+    file = fopen(path, "r");
+
+    if (file == NULL)
+      continue;
+
+    if (fgets(name, sizeof(name), file) != NULL) {
+      name[strcspn(name, "\n")] = '\0';
+
+      if (strstr(name, argv[1]) != NULL)
+        printf("%s %s\n", entry->d_name, name);
     }
 
-    free(line);
-  } else {
-    for (int i = 2; i < argc; i++) {
-      FILE *file = fopen(argv[i], "r");
-
-      if (file == NULL) {
-        perror(argv[i]);
-        regfree(&regex);
-        return 2;
-      }
-
-      char *line = NULL;
-      size_t len = 0;
-
-      while (getline(&line, &len, file) != -1) {
-        if (regexec(&regex, line, 0, NULL, 0) == 0) {
-          fputs(line, stdout);
-          found = 1;
-        }
-      }
-      free(line);
-      fclose(file);
-    }
+    fclose(file);
   }
 
-  regfree(&regex);
+  closedir(proc);
 
-  return found ? 0 : 1;
+  return 0;
 }
