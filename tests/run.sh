@@ -22,3 +22,16 @@ test "$("$root/bin/basename" /one/two.txt .txt)" = two
 test "$("$root/bin/dirname" /one/two)" = /one
 printf 'abc' | "$root/bin/tail" -c 2 > "$tmp/tail"
 test "$(cat "$tmp/tail")" = bc
+"$root/bin/printf" '%s:%04d\n' hello 7 > "$tmp/printf"
+printf 'hello:0007\n' > "$tmp/expected"
+cmp "$tmp/expected" "$tmp/printf"
+printf 'a,b,c\nx\ny,z\n' | "$root/bin/cut" -d , -f 1,3 > "$tmp/cut"
+printf 'a,c\nx\ny\n' > "$tmp/expected"
+cmp "$tmp/expected" "$tmp/cut"
+printf 'abcd\n' | "$root/bin/cut" -b 2-3 > "$tmp/cut"
+printf 'bc\n' > "$tmp/expected"
+cmp "$tmp/expected" "$tmp/cut"
+if "$root/bin/cut" -f 1, -d , </dev/null >/dev/null 2>&1; then
+  echo 'cut accepted an invalid list' >&2
+  exit 1
+fi

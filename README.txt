@@ -38,6 +38,8 @@ coreutils programs. It is a work in progress by the Pandix Project.
     sleep    suspend execution for a specified amount of time
     grep     search for patterns in text
     pgrep    search for processes by name
+    cut      select bytes, characters, or delimiter-separated fields
+    printf   format and print arguments
 
   COMPILING
 A C compiler and make are required. Build every program with:
@@ -48,6 +50,15 @@ The binaries are written to the bin/ directory. To remove build output:
 
 Run the regression suite with:
     make test
+
+  SUPPORTED OPTIONS
+    cut supports -b, -c, and -f selection lists (N, N-M, N-, -M),
+    -d for a one-byte field delimiter, and -s to suppress lines without
+    the delimiter. Character selection is byte-based. Field output keeps
+    the selected fields in input order.
+    printf supports %s, %c, %d, %i, %u, %o, %x, %X, %%, basic flags,
+    numeric width and precision, and common backslash escapes including
+    \n, \t, \r, and \\. Unsupported conversions are errors.
 
   RUNNING
 Run a program from the bin/ directory, for example:
